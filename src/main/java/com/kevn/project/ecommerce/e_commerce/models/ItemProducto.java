@@ -40,4 +40,9 @@ public class ItemProducto {
     public void eliminarProducto(Producto producto) {
         productos.removeIf(pc -> pc.getProducto().equals(producto));
     }
+
+    public float getTotalProductos(){
+        float total = (float)productos.stream().mapToDouble(p -> p.getTotal()).sum();
+        return total;
+    }
 }

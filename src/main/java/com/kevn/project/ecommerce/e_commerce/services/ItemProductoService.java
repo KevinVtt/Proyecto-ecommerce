@@ -58,7 +58,7 @@ no necesitas envolverlo en un Optional ya que nunca será null
     @Override
     @Transactional(readOnly = true)
     public List<ItemProducto> findAll() {
-        return (List<ItemProducto>) repository.findAll();
+        return repository.findAll();
     }
 
     @Override

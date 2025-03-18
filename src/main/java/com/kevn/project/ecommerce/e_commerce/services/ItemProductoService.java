@@ -1,5 +1,6 @@
 package com.kevn.project.ecommerce.e_commerce.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,12 +11,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.kevn.project.ecommerce.e_commerce.exception.NotFoundException;
 import com.kevn.project.ecommerce.e_commerce.models.ItemProducto;
+import com.kevn.project.ecommerce.e_commerce.models.Pedido;
 import com.kevn.project.ecommerce.e_commerce.models.Producto;
 import com.kevn.project.ecommerce.e_commerce.models.ProductoCantidad;
 import com.kevn.project.ecommerce.e_commerce.repositories.IItemProducto;
+import com.kevn.project.ecommerce.e_commerce.repositories.IProductoCantidad;
 
 @Service
 public class ItemProductoService implements IService<ItemProducto> {
+
 
 
     private static final Logger logger = LoggerFactory.getLogger(ItemProductoService.class);
@@ -25,6 +29,12 @@ public class ItemProductoService implements IService<ItemProducto> {
 
     @Autowired
     private ProductoService repositoryProducto;
+
+    @Autowired
+    private PedidoService servicePedido;
+
+    @Autowired
+    private IProductoCantidad productoCantidadRepository;
 
 
     @Override
@@ -71,8 +81,19 @@ public class ItemProductoService implements IService<ItemProducto> {
         try {
             if (t.getId() != null && t.getId() > 0) {
                 ItemProducto itemProductoDb = findById(t.getId());
+                if(itemProductoDb.getPedido() == null){
+                    Pedido pedido = new Pedido();
+                    pedido.setEstado("Pendiente");
+                    pedido.setFecha(LocalDateTime.now());
+                    servicePedido.save(pedido);
+                    itemProductoDb.setPedido(pedido);
+                    return repository.save(itemProductoDb);
+                }
                 return repository.save(itemProductoDb);
             } else {
+                if(t.getUsuario() == null){
+                    throw new RuntimeException("No puedes crear un itemProducto porque no existe el usuario");
+                }
                 return repository.save(t);
             }
         } catch (Exception e) {
@@ -98,6 +119,9 @@ public class ItemProductoService implements IService<ItemProducto> {
 
             // Buscar el ItemProductoId.
             ItemProducto itemProductoDb = repository.findById(itemProductoId).orElseThrow();
+            // if(itemProductoDb == null){
+            //     repository.save(new ItemProducto());
+            // }
             logger.info("ID del itemProductoDb: " + itemProductoDb.getId());
             // Buscar el productoId
             Producto producto = repositoryProducto.findById(productoId);
@@ -165,12 +189,23 @@ public class ItemProductoService implements IService<ItemProducto> {
         }
     }
 
+    // Elimina los productos que se encuentren en ItemProducto.
+    // Utilizarlo para vaciar la lista
     @Transactional
     public void eliminarTodosLosProductos(Long itemProductoId) {
         try {
             ItemProducto itemProductoDb = findById(itemProductoId);
+            
+            // Eliminar todos los ProductoCantidad asociados al ItemProducto
+            productoCantidadRepository.deleteAll(itemProductoDb.getProductos());
+            
+            // Limpiar la lista en memoria
             itemProductoDb.getProductos().clear();
-            repository.save(itemProductoDb);
+            // Seteamos nulo el pedido
+            itemProductoDb.setPedido(null);
+    
+            // Guardar los cambios (opcional, ya que @Transactional se encarga de esto)
+            // repository.save(itemProductoDb);
         } catch (Exception e) {
             throw new RuntimeException("Error al eliminar todos los productos del ItemProducto: " + e.getMessage());
         }

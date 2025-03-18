@@ -2,11 +2,12 @@ package com.kevn.project.ecommerce.e_commerce.controllers;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.kevn.project.ecommerce.e_commerce.exception.AlreadyExistException;
 import com.kevn.project.ecommerce.e_commerce.exception.NotExistException;
 import com.kevn.project.ecommerce.e_commerce.exception.NotFoundException;
 import com.kevn.project.ecommerce.e_commerce.models.ItemProducto;
@@ -69,12 +70,9 @@ public class ItemProductoController {
             if(itDb.getProductos().isEmpty()){
                 throw new NotExistException("Los productos no existen");
             }else{
-                if(itDb.getPedido() == null){
-                    service.save(itDb);
-                    return ResponseEntity.ok("La compra ha sido completada!");
-                }else{
-                    throw new AlreadyExistException("Ya existe un pedido para esta compra, debe esperar al repartidor");
-                }
+                service.actualizarPedido(itDb);
+                service.save(itDb);
+                return ResponseEntity.ok("La compra ha sido completada!");
             }
         }else{
             throw new NotFoundException("El objeto que estas buscando no existe en la base de datos");
@@ -111,6 +109,15 @@ public class ItemProductoController {
             @PathVariable int cantidad) {
         service.agregarProducto2(itemProductoId, productoId, cantidad);
         return ResponseEntity.ok("Producto agregado al ItemProducto");
+    }
+
+    @PutMapping("/modificar-estado-pedido/{itemProductoId}")
+    public ResponseEntity<?> modificarPedido(
+            @PathVariable Long itemProductoId,
+            @RequestBody Map<String,String> request){
+        String estado = request.get("estado");
+        service.modificarEstadoPedido(itemProductoId, estado);
+        return ResponseEntity.ok("El estado del pedido ha sido modificado");
     }
 
     @DeleteMapping("/eliminar-producto/{itemProductoId}/{productoId}")

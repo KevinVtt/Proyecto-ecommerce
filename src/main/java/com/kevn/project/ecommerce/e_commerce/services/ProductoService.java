@@ -1,9 +1,6 @@
 package com.kevn.project.ecommerce.e_commerce.services;
 
 import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.kevn.project.ecommerce.e_commerce.exception.AlreadyExistException;
@@ -46,6 +43,7 @@ public class ProductoService implements IService<Producto> {
     @Override
     @Transactional
     public Producto save(Producto t) {
+
 /*        Optional<Producto> optional;
         if (t.getId() != null && t.getId() > 0) {
             optional = Optional.of(findById(t.getId()));
@@ -67,7 +65,9 @@ public class ProductoService implements IService<Producto> {
         imaginate que tenes 10 millones de productos, cargarlos en memoria te va a hacer explotar el sistema(no tan asi per bueno)
 
         */
-        if(repository.existsByNombre(t.getNombre())){
+
+        // Modifique la condicion del if, pq si yo quiero hacer un Update me tomara la excepcion.
+        if(repository.existsByNombre(t.getNombre()) && t.getId() == null){
             throw new AlreadyExistException("El producto que estás intentando insertar ya existe en la base de datos");
         }
         return repository.save(t);

@@ -1,6 +1,7 @@
 package com.kevn.project.ecommerce.e_commerce.controllers;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,6 +44,6 @@ public class ProductoCantidadController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);
-        return ResponseEntity.ok("ProductoCantidad eliminado!");
+        return ResponseEntity.badRequest().body("El producto no se ha eliminado");
     }
 }

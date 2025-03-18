@@ -23,7 +23,7 @@ public class UsuarioController {
     @Autowired
     private UsuarioService services;
 
-    @GetMapping("/findall")
+    @GetMapping("/all")
     public ResponseEntity<?> findAll() {
 
         return ResponseEntity.ok(services.findAll());

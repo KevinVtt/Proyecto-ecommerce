@@ -2,7 +2,6 @@ package com.kevn.project.ecommerce.e_commerce.controllers;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,8 +20,11 @@ import com.kevn.project.ecommerce.e_commerce.services.PedidoService;
 @RequestMapping("/api/pedido")
 public class PedidoController {
 
-    @Autowired
-    private PedidoService service;
+    private final PedidoService service;
+    
+    public PedidoController(PedidoService service) {
+        this.service = service;
+    }
 
     @GetMapping("/all")
     public ResponseEntity<?> findAll(){

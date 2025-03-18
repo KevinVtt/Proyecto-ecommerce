@@ -2,7 +2,6 @@ package com.kevn.project.ecommerce.e_commerce.controllers;
 
 import java.util.Collections;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -110,7 +109,7 @@ public class ItemProductoController {
             @PathVariable Long itemProductoId,
             @PathVariable Long productoId,
             @PathVariable int cantidad) {
-        service.agregarProducto(itemProductoId, productoId, cantidad);
+        service.agregarProducto2(itemProductoId, productoId, cantidad);
         return ResponseEntity.ok("Producto agregado al ItemProducto");
     }
 

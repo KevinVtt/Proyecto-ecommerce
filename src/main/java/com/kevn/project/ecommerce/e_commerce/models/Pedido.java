@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,9 +25,9 @@ public class Pedido {
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<ItemProducto> itemProducto;
+    private List<ItemProducto> itemProducto = new ArrayList<>();
     
-    private LocalDateTime fecha = LocalDateTime.now();
+    private LocalDateTime fecha;
     private String estado;
 
     @Override

@@ -20,27 +20,18 @@ public class PedidoService implements IService<Pedido> {
     @Override
     @Transactional
     public void delete(Long id) {
-        try {
             Optional<Pedido> pedido = Optional.of(findById(id));
             if (pedido.isPresent()) {
                 repository.delete(pedido.orElseThrow());
             }
             throw new NotFoundException("No se ha encontrado el producto para eliminarlo, ID: " + id);
-        } catch (Exception e) {
-            throw new RuntimeException("error al eliminar con id " + id + " mensaje de error: " + e.getMessage());
-        }
 
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Pedido> findAll() {
-
-        try {
             return (List<Pedido>) repository.findAll();
-        } catch (Exception e) {
-            throw new RuntimeException("Error al buscar todos los pedidos " + e.getMessage());
-        }
 
     }
 
@@ -48,19 +39,13 @@ public class PedidoService implements IService<Pedido> {
     @Transactional(readOnly = true)
     public Pedido findById(Long id) {
 
-        try {
             return repository.findById(id).orElseThrow(() -> new NotFoundException("El objeto no existe"));
-        } catch (Exception e) {
-            throw new NotFoundException(
-                    "error al buscar el pedido con id " + id + " mensaje de error " + e.getMessage());
-        }
 
     }
 
     @Override
     @Transactional
     public Pedido save(Pedido pedido) {
-        try {
             // Si el ID es mayor que 0, es una actualización
             if (pedido.getId() != null && pedido.getId() > 0) {
                 Optional<Pedido> pedidoDb = repository.findById(pedido.getId());
@@ -73,20 +58,13 @@ public class PedidoService implements IService<Pedido> {
                 return repository.save(pedido); // Guarda el nuevo pedido
 
             }
-        } catch (Exception e) {
-            throw new NotFoundException("Error al guardar/insertar el pedido: " + e.getMessage());
-        }
     }
 
     @Override
     public List<Pedido> saveAll(List<Pedido> list) {
-        try {
 
             return (List<Pedido>) repository.saveAll(list);
 
-        } catch (Exception e) {
-            throw e;
-        }
     }
 
 }

@@ -1,11 +1,12 @@
 package com.kevn.project.ecommerce.e_commerce.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "item_producto")
@@ -23,12 +24,13 @@ public class ItemProducto {
     @OneToMany(mappedBy = "itemProducto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ProductoCantidad> productos = new ArrayList<>();
 
-    @OneToOne(mappedBy = "itemProducto", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "pedido_id")
     private Pedido pedido;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonIgnore
     private Usuario usuario;
 
     public void agregarProducto(Producto producto, int cantidad) {
@@ -45,4 +47,14 @@ public class ItemProducto {
         float total = (float)productos.stream().mapToDouble(p -> p.getTotal()).sum();
         return total;
     }
+
+    public void crearPedido(){
+        Pedido pedido = new Pedido();
+        pedido.setEstado("Pendiente");
+        this.pedido = pedido;
+    }
+
+    // public String preparandoPedido(){
+    //     return "Enviando";
+    // }
 }

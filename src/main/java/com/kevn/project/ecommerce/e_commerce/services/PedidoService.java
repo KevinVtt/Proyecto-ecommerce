@@ -2,9 +2,6 @@ package com.kevn.project.ecommerce.e_commerce.services;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.kevn.project.ecommerce.e_commerce.exception.NotFoundException;
 import com.kevn.project.ecommerce.e_commerce.models.Pedido;
 import com.kevn.project.ecommerce.e_commerce.repositories.IPedido;

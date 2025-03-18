@@ -2,7 +2,6 @@ package com.kevn.project.ecommerce.e_commerce.services;
 
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +21,7 @@ public class ProductoCantidadService implements IService<ProductoCantidad>{
     @Transactional
     @Override
     public void delete(Long id) {
-            Optional<ProductoCantidad> optional = repository.findById(id);
+        Optional<ProductoCantidad> optional = repository.findById(id);
             if(optional.isPresent()){
                 repository.deleteById(id);
             }

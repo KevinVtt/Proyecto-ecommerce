@@ -2,9 +2,6 @@ package com.kevn.project.ecommerce.e_commerce.services;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.kevn.project.ecommerce.e_commerce.exception.AlreadyExistException;
 import com.kevn.project.ecommerce.e_commerce.exception.NotFoundException;
 import com.kevn.project.ecommerce.e_commerce.models.Usuario;
@@ -57,33 +54,24 @@ public class UsuarioService implements IService<Usuario> {
             if (userDb.isPresent()) {
                 return repository.save(t);
             }
-
             throw new NotFoundException("El usuario no existe en la base de datos para modificarlo");
-
-
         } else {
             userDb = findAll()
                     .stream()
                     .filter(u -> u.getNombre().equals(t.getNombre()) && u.getDni().equals(t.getDni()))
                     .findAny();
-
             if (userDb.isEmpty()) {
                 return repository.save(t);
             }
-
             throw new AlreadyExistException("el objeto ya existe " + " nombre: " + t.getNombre()
                     + " email: " + t.getEmail());
         }
-
     }
 
     @Override
     @Transactional
     public List<Usuario> saveAll(List<Usuario> list) {
-
         return (List<Usuario>) repository.saveAll(list);
-
     }
-
 
 }

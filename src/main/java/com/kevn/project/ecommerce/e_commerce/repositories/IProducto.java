@@ -6,4 +6,5 @@ import org.springframework.data.repository.CrudRepository;
 import com.kevn.project.ecommerce.e_commerce.models.Producto;
 
 public interface IProducto extends JpaRepository<Producto,Long> {
+    boolean existsByNombre(String nombre);
 }

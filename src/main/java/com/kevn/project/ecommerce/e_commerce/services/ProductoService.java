@@ -20,31 +20,30 @@ public class ProductoService implements IService<Producto> {
     @Override
     @Transactional
     public void delete(Long id) {
-        Optional<Producto> producto = Optional.of(findById(id));
-        if (producto.isPresent()) {
-            repository.delete(producto.orElseThrow());
-        } else {
+        if (!this.repository.existsById(id)) {
             throw new NotFoundException("No se ha encontrado el producto para eliminarlo, ID: " + id);
         }
+        this.repository.deleteById(id);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Producto> findAll() {
-        return (List<Producto>) repository.findAll();
+        //es code smell retornar una entidad de persistencia
+        //recomiendo retornar un DTO
+        return repository.findAll();
     }
 
     @Override
     @Transactional(readOnly = true)
     public Producto findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new NotFoundException("El producto no existe con id: " + id));
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("El producto no existe con id: " + id));
     }
 
     @Override
     @Transactional
     public Producto save(Producto t) {
-        Optional<Producto> optional;
+/*        Optional<Producto> optional;
         if (t.getId() != null && t.getId() > 0) {
             optional = Optional.of(findById(t.getId()));
             if (optional.isPresent()) {
@@ -61,11 +60,19 @@ public class ProductoService implements IService<Producto> {
             }
             return repository.save(t);
         }
+        //recorrer la lista de productos y verificar si ya existe el producto es completamente ineficiente
+        imaginate que tenes 10 millones de productos, cargarlos en memoria te va a hacer explotar el sistema(no tan asi per bueno)
+
+        */
+        if(repository.existsByNombre(t.getNombre())){
+            throw new AlreadyExistException("El producto que estás intentando insertar ya existe en la base de datos");
+        }
+        return repository.save(t);
     }
 
     @Override
     @Transactional
     public List<Producto> saveAll(List<Producto> list) {
-        return (List<Producto>) repository.saveAll(list);
+        return  repository.saveAll(list);
     }
 }

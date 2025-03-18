@@ -2,8 +2,10 @@ package com.kevn.project.ecommerce.e_commerce.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import com.kevn.project.ecommerce.e_commerce.exception.BadRequestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,36 +66,41 @@ no necesitas envolverlo en un Optional ya que nunca será null
     @Override
     @Transactional(readOnly = true)
     public ItemProducto findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new NotFoundException("El ItemProducto no existe con id: " + id));
+        return repository.findById(id).orElseThrow(() -> new NotFoundException("El ItemProducto no existe con id: " + id));
     }
 
     @Override
     @Transactional
     public ItemProducto save(ItemProducto t) {
-        if (t.getId() != null && t.getId() > 0) {
-            ItemProducto itemProductoDb = findById(t.getId());
-            if (itemProductoDb.getPedido() == null) {
-                Pedido pedido = new Pedido();
-                pedido.setEstado("Pendiente");
-                pedido.setFecha(LocalDateTime.now());
-                servicePedido.save(pedido);
-                itemProductoDb.setPedido(pedido);
-                return repository.save(itemProductoDb);
-            }
-            return repository.save(itemProductoDb);
-        } else {
-            if (t.getUsuario() == null) {
-                throw new RuntimeException("No puedes crear un itemProducto porque no existe el usuario");
-            }
-            return repository.save(t);
+        if (Objects.isNull(t.getUsuario())) {
+            throw new BadRequestException("No puedes crear un itemProducto porque no existe el usuario");
         }
+        ItemProducto itemProductoDb = findById(t.getId());
+
+     /*
+       sea o no sea nulo el pedido, se guarda el itemProducto, por lo que no es necesario hacer la validación
+       if (!Objects.isNull(t.getPedido())) {
+            Pedido pedido = new Pedido();
+            pedido.setEstado("Pendiente");
+            pedido.setFecha(LocalDateTime.now());
+            servicePedido.save(pedido);
+            itemProductoDb.setPedido(pedido);
+            return repository.save(itemProductoDb);
+        }
+
+        return repository.save(itemProductoDb);*/
+        Pedido pedido = new Pedido();
+        pedido.setEstado("Pendiente");
+        pedido.setFecha(LocalDateTime.now());
+        servicePedido.save(pedido);
+        itemProductoDb.setPedido(pedido);
+        return repository.save(itemProductoDb);
     }
 
     @Override
     @Transactional
     public List<ItemProducto> saveAll(List<ItemProducto> list) {
-        return (List<ItemProducto>) repository.saveAll(list);
+        return repository.saveAll(list);
     }
 
     @Transactional
@@ -118,6 +125,14 @@ no necesitas envolverlo en un Optional ya que nunca será null
         int indice = 0;
         ProductoCantidad productoCantidad_ItemProducto = new ProductoCantidad();
         int tam = listaProductoCantidad_itemProductoDb.size();
+
+        //no pude entender el codigo, pero ahi podes usar la api de stream de java, que es mas legible
+        //ProductoCantidad productoCantidad_ItemProducto = listaProductoCantidad_itemProductoDb.stream().filter(p -> p.getProducto().equals(producto)).findFirst().orElse(null);
+        //if (productoCantidad_ItemProducto != null) {
+        //    productoCantidad_ItemProducto.setCantidad(productoCantidad_ItemProducto.getCantidad() + cantidad);
+        // algo asi seria creo,
+        // pero no entiendo porque no se puede hacer un simple for each
+        // recorda que las banderas casi no se usan en java, y si se usan es para casos muy especificos
         while (!bandera && indice < tam) {
             bandera = (listaProductoCantidad_itemProductoDb
                     .get(indice)

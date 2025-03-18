@@ -2,16 +2,23 @@ package com.kevn.project.ecommerce.e_commerce.services;
 
 import java.util.List;
 import java.util.Optional;
+
 import com.kevn.project.ecommerce.e_commerce.exception.NotFoundException;
 import com.kevn.project.ecommerce.e_commerce.models.Pedido;
 import com.kevn.project.ecommerce.e_commerce.repositories.IPedido;
+
+import lombok.extern.log4j.Log4j2;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Log4j2
 public class PedidoService implements IService<Pedido> {
 
     private IPedido repository;
+
+    // private ItemProductoService itemProductoService;
 
     public PedidoService(IPedido repository) {
         this.repository = repository;
@@ -46,33 +53,15 @@ public class PedidoService implements IService<Pedido> {
     @Override
     @Transactional
     public Pedido save(Pedido pedido) {
-            /*// Si el ID es mayor que 0, es una actualización
-            if (pedido.getId() != null && pedido.getId() > 0) {
-                Optional<Pedido> pedidoDb = repository.findById(pedido.getId());
-                if (pedidoDb.isPresent()) {
-                    return repository.save(pedido); // Actualiza el pedido existente
-                } else {
-                    throw new NotFoundException("No se ha encontrado el pedido para modificarlo");
-                }
-            } else {
-                return repository.save(pedido); // Guarda el nuevo pedido
-
-            }
-            al fijarte si existe estas rompiendo con el principio SOLID de responsabilidad unica,
-            ya que el guardar no estaria guardando solamente cuando el pedido es nuevo, sino que esta validando
-            mas de una cosa.
-            Deberias tener un metodo update que se encargue de toda la logica de actualizar un pedido.
-            */
-        if (pedido.getItemProducto().isEmpty()) {
-            throw new NotFoundException("El pedido no tiene productos");
-        }
         return repository.save(pedido);
     }
 
     @Override
+    @Transactional
     public List<Pedido> saveAll(List<Pedido> list) {
         return repository.saveAll(list);
 
     }
+
 
 }

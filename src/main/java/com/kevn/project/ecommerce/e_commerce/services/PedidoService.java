@@ -14,8 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PedidoService implements IService<Pedido> {
 
-    @Autowired
     private IPedido repository;
+
+    public PedidoService(IPedido repository) {
+        this.repository = repository;
+    }
 
     @Override
     @Transactional

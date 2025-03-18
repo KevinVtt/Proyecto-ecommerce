@@ -14,8 +14,11 @@ import com.kevn.project.ecommerce.e_commerce.repositories.IProducto;
 @Service
 public class ProductoService implements IService<Producto> {
 
-    @Autowired
-    private IProducto repository;
+    private final IProducto repository;
+
+    public ProductoService(IProducto repository) {
+        this.repository = repository;
+    }
 
     @Override
     @Transactional

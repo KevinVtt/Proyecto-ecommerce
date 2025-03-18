@@ -17,8 +17,11 @@ import com.kevn.project.ecommerce.e_commerce.services.ItemProductoService;
 @RequestMapping("/api/item-producto")
 public class ItemProductoController {
 
-    @Autowired
-    private ItemProductoService service;
+    private final ItemProductoService service;
+
+    public ItemProductoController(ItemProductoService service) {
+        this.service = service;
+    }
 
     @GetMapping("/all")
     public ResponseEntity<?> findAll() {

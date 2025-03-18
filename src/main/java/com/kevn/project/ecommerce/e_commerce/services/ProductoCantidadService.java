@@ -13,8 +13,11 @@ import com.kevn.project.ecommerce.e_commerce.repositories.IProductoCantidad;
 @Service
 public class ProductoCantidadService implements IService<ProductoCantidad>{
 
-    @Autowired
-    private IProductoCantidad repository;
+    private final IProductoCantidad repository;
+
+    public ProductoCantidadService(IProductoCantidad repository) {
+        this.repository = repository;
+    }
 
     @Transactional
     @Override
@@ -28,7 +31,7 @@ public class ProductoCantidadService implements IService<ProductoCantidad>{
     @Override
     @Transactional(readOnly = true)
     public List<ProductoCantidad> findAll() {
-            return (List<ProductoCantidad>) repository.findAll();
+            return  repository.findAll();
     }
 
     @Override

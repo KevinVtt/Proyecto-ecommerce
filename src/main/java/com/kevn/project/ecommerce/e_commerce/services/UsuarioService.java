@@ -15,8 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UsuarioService implements IService<Usuario> {
 
-    @Autowired
-    private IUsuario repository;
+    private final IUsuario repository;
+
+    public UsuarioService(IUsuario repository) {
+        this.repository = repository;
+    }
 
     @Override
     @Transactional

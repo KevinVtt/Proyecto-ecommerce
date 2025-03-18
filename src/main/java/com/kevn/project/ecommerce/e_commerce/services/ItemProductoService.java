@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.kevn.project.ecommerce.e_commerce.exception.BadRequestException;
+import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +21,23 @@ import com.kevn.project.ecommerce.e_commerce.repositories.IItemProducto;
 import com.kevn.project.ecommerce.e_commerce.repositories.IProductoCantidad;
 
 @Service
+@Log4j2
 public class ItemProductoService implements IService<ItemProducto> {
 
+    private final IItemProducto repository;
 
-    private static final Logger logger = LoggerFactory.getLogger(ItemProductoService.class);
+    private final ProductoService repositoryProducto;
 
-    @Autowired
-    private IItemProducto repository;
+    private final PedidoService servicePedido;
 
-    @Autowired
-    private ProductoService repositoryProducto;
+    private final IProductoCantidad productoCantidadRepository;
 
-    @Autowired
-    private PedidoService servicePedido;
-
-    @Autowired
-    private IProductoCantidad productoCantidadRepository;
+    public ItemProductoService(IItemProducto repository, ProductoService repositoryProducto, PedidoService servicePedido, IProductoCantidad productoCantidadRepository) {
+        this.repository = repository;
+        this.repositoryProducto = repositoryProducto;
+        this.servicePedido = servicePedido;
+        this.productoCantidadRepository = productoCantidadRepository;
+    }
 
 
     @Override
@@ -111,15 +113,15 @@ no necesitas envolverlo en un Optional ya que nunca será null
         // if(itemProductoDb == null){
         //     repository.save(new ItemProducto());
         // }
-        logger.info("ID del itemProductoDb: " + itemProductoDb.getId());
+        log.info("ID del itemProductoDb: " + itemProductoDb.getId());
         // Buscar el productoId
         Producto producto = repositoryProducto.findById(productoId);
-        logger.info("Producto: " + producto.getNombre() + " producto id: " + Long.toString(producto.getId()));
+        log.info("Producto: " + producto.getNombre() + " producto id: " + Long.toString(producto.getId()));
         /* Si existe el mismo producto tenemos que subirle la cantidad en productoCantidad y bajarle la cantidad en producto */
         List<ProductoCantidad> listaProductoCantidad_itemProductoDb = itemProductoDb.getProductos();
 
         // Verificamos si existe el mismo producto en nuestra listaProductoCantidadDb del itemProducto.
-        logger.info("entrando al existeProductoEnItemProducto");
+        log.info("entrando al existeProductoEnItemProducto");
         // ProductoCantidad existeProductoEnItemProducto =  listaProductoCantidad_itemProductoDb.stream().filter(p -> p.getProducto().getId().equals(producto.getId())).findFirst().orElseGet(null);
         boolean bandera = false;
         int indice = 0;
@@ -145,16 +147,16 @@ no necesitas envolverlo en un Optional ya que nunca será null
             }
             indice++;
         }
-        logger.info("saliendo al existeProductoEnItemProducto");
+        log.info("saliendo al existeProductoEnItemProducto");
 
         if (bandera) {
-            logger.info("Entramos en el if");
+            log.info("Entramos en el if");
             // Si esta presente debemos subirle la cantidad del productoCantidad y bajarle la cantidad del producto
             productoCantidad_ItemProducto.setCantidad(productoCantidad_ItemProducto.getCantidad() + cantidad);
             productoCantidad_ItemProducto.getProducto().setCantidad(productoCantidad_ItemProducto.getProducto().getCantidad() - cantidad);
             repository.save(itemProductoDb);
         } else {
-            logger.info("Entramos en el else");
+            log.info("Entramos en el else");
             /* Si no existe, debemos agregar ese producto a la lista. */
             ProductoCantidad nuevoProductoCantidad = new ProductoCantidad();
             int cantidadProducto = producto.getCantidad();

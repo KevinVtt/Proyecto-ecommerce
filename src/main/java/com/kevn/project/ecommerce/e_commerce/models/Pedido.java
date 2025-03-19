@@ -28,9 +28,7 @@ public class Pedido {
     
     @Embedded
     private Fecha fecha = new Fecha();
-
     private String estado;
-
     @Override
     public final boolean equals(Object object) {
         if (this == object) return true;

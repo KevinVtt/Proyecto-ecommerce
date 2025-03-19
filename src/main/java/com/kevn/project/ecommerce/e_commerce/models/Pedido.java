@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +26,9 @@ public class Pedido {
     @JsonIgnore
     private List<ItemProducto> itemProducto = new ArrayList<>();
     
-    private LocalDateTime fecha;
+    @Embedded
+    private Fecha fecha = new Fecha();
+
     private String estado;
 
     @Override
@@ -45,4 +46,5 @@ public class Pedido {
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
+
 }

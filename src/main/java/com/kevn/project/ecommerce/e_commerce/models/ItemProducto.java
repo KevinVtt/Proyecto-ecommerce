@@ -51,10 +51,6 @@ public class ItemProducto {
         return total;
     }
 
-    // public String preparandoPedido(){
-    //     return "Enviando";
-    // }
-
     @Override
     public final boolean equals(Object object) {
         if (this == object) return true;

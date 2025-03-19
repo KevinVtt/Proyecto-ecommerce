@@ -45,6 +45,4 @@ public class Fecha {
         this.fechaFin = fechaFin;
     }
 
-    
-
 }

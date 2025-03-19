@@ -74,7 +74,6 @@ public class ItemProductoController {
         throw new NotFoundException("El objeto que estas buscando no existe en la base de datos");
         
     }
-
     /*
      * Realizar otra compra !
      * Este metodo es de forma de prueba para verificar si funciona, la idea ahora

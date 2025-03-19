@@ -51,12 +51,6 @@ public class ItemProducto {
         return total;
     }
 
-    public void crearPedido(){
-        Pedido pedido = new Pedido();
-        pedido.setEstado("Pendiente");
-        this.pedido = pedido;
-    }
-
     // public String preparandoPedido(){
     //     return "Enviando";
     // }

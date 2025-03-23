@@ -25,9 +25,7 @@ public class UsuarioController {
 
     @GetMapping("/all")
     public ResponseEntity<?> findAll() {
-
         return ResponseEntity.ok(services.findAll());
-
     }
 
     @GetMapping("/{id}")

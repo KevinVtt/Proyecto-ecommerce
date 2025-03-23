@@ -7,4 +7,4 @@ INSERT INTO item_producto (usuario_id) VALUES (2);
 INSERT INTO item_producto (usuario_id) VALUES (1);
 INSERT INTO producto_cantidad (item_producto_id, producto_id, cantidad) VALUES (1, 1, 2);
 INSERT INTO producto_cantidad (item_producto_id, producto_id, cantidad) VALUES (1, 2, 1);
-INSERT INTO producto_cantidad (item_producto_id, producto_id, cantidad) VALUES (2, 3, 3); 
+INSERT INTO producto_cantidad (item_producto_id, producto_id, cantidad) VALUES (2, 3, 3);   

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.kevn.project.ecommerce.e_commerce.exception.NotExistException;
 import com.kevn.project.ecommerce.e_commerce.exception.NotFoundException;
 import com.kevn.project.ecommerce.e_commerce.models.ItemProducto;
 import com.kevn.project.ecommerce.e_commerce.services.ItemProductoService;
@@ -66,7 +65,7 @@ public class ItemProductoController {
         ItemProducto itDb = service.findById(id);
 
         if (itDb.getId() != null) {
-            if (itDb.getProductos().isEmpty()) throw new NotExistException("Los productos no existen");
+            if (!service.verificarSiExistenProductos(itDb)) throw new NotFoundException("No existen los productos en tu cuenta");
             service.updateEstadoPedido(itDb);
             return ResponseEntity.ok("La compra ha sido completada!");
         }
@@ -86,7 +85,7 @@ public class ItemProductoController {
         ItemProducto itDb = service.findById(id);
         if (itDb != null) {
 
-            if (itDb.getProductos().isEmpty()) {
+            if (!service.verificarSiExistenProductos(itDb)) {
                 throw new RuntimeException("Tu lista esta vacia, y esta lista para agregar productos");
             } else {
                 service.eliminarTodosLosProductos(itDb.getId());
@@ -103,7 +102,7 @@ public class ItemProductoController {
             @PathVariable Long itemProductoId,
             @PathVariable Long productoId,
             @PathVariable int cantidad) {
-        service.agregarProducto2(itemProductoId, productoId, cantidad);
+        service.agregarProducto(itemProductoId, productoId, cantidad);
         return ResponseEntity.ok("Producto agregado al ItemProducto");
     }
 

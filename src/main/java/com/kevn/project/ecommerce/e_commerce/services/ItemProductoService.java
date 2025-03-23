@@ -14,7 +14,6 @@ import com.kevn.project.ecommerce.e_commerce.models.Pedido;
 import com.kevn.project.ecommerce.e_commerce.models.Producto;
 import com.kevn.project.ecommerce.e_commerce.repositories.IItemProducto;
 import com.kevn.project.ecommerce.e_commerce.repositories.IPedido;
-import com.kevn.project.ecommerce.e_commerce.repositories.IProductoCantidad;
 import com.kevn.project.ecommerce.e_commerce.strategy.ActualizarProducto;
 import com.kevn.project.ecommerce.e_commerce.strategy.AgregarNuevoProducto;
 import com.kevn.project.ecommerce.e_commerce.strategy.AgregarProducto;
@@ -30,14 +29,10 @@ public class ItemProductoService implements IService<ItemProducto>,ModificarPedi
 
     private final IPedido servicePedido;
 
-    private final IProductoCantidad productoCantidadRepository;
-
-    public ItemProductoService(IItemProducto repository, ProductoService serviceProducto, IPedido servicePedido,
-            IProductoCantidad productoCantidadRepository) {
+    public ItemProductoService(IItemProducto repository, ProductoService serviceProducto, IPedido servicePedido) {
         this.repository = repository;
         this.serviceProducto = serviceProducto;
         this.servicePedido = servicePedido;
-        this.productoCantidadRepository = productoCantidadRepository;
     }
 
     @Override
@@ -82,10 +77,17 @@ public class ItemProductoService implements IService<ItemProducto>,ModificarPedi
     @Transactional
     public void updateEstadoPedido(ItemProducto it){
         
+        if(!verificarSiExistenProductos(it)){
+            throw new NotFoundException("No existen productos en tu cuenta");
+        }
         Pedido pedido = asignarEstado(it);
         it.setPedido(pedido);
         servicePedido.save(pedido);
         repository.save(it);
+    }
+
+    public boolean verificarSiExistenProductos(ItemProducto itemProducto){
+        return !itemProducto.getProductos().isEmpty();
     }
 
     @Override
@@ -102,25 +104,23 @@ public class ItemProductoService implements IService<ItemProducto>,ModificarPedi
     }
 
     @Transactional
-    public void agregarProducto2(Long itemProductoId, Long productoId, int cantidad) {
+    public void agregarProducto(Long itemProductoId, Long productoId, int cantidad) {
 
-        ItemProducto itemProducto = repository.findById(itemProductoId).orElseThrow();
+        ItemProducto itemProducto = repository.findById(itemProductoId).orElseThrow( () -> new NullPointerException("El objeto es nulo"));
         Producto producto = serviceProducto.findById(productoId);
-
         AgregarProducto strategy = itemProducto.getProductos().stream().anyMatch(p -> p.getProducto().equals(producto))
                 ? new ActualizarProducto()
                 : new AgregarNuevoProducto();
-
+        
         strategy.agregar(itemProducto, producto, cantidad);
-        repository.save(itemProducto);
-
+        save(itemProducto);
     }
 
     @Transactional
     public void eliminarProducto(Long itemProductoId, Long productoId) {
         ItemProducto itemProductoDb = findById(itemProductoId);
         Producto producto = serviceProducto.findById(productoId);
-        itemProductoDb.getProductos().removeIf(p -> p.getProducto().equals(producto));
+        itemProductoDb.eliminarProducto(producto);
         repository.save(itemProductoDb);
     }
 
@@ -129,16 +129,11 @@ public class ItemProductoService implements IService<ItemProducto>,ModificarPedi
     @Transactional
     public void eliminarTodosLosProductos(Long itemProductoId) {
         ItemProducto itemProductoDb = findById(itemProductoId);
-
-        // Eliminar todos los ProductoCantidad asociados al ItemProducto
-        productoCantidadRepository.deleteAll(itemProductoDb.getProductos());
-
-        // Limpiar la lista en memoria
+    
+        // Limpiar la lista de productos (orphanRemoval = true se encargará de eliminar los ProductoCantidad)
         itemProductoDb.getProductos().clear();
-        // Seteamos nulo el pedido
-        itemProductoDb.setPedido(null);
-
-        // Guardar los cambios (opcional, ya que @Transactional se encarga de esto)
-        // repository.save(itemProductoDb);
+        itemProductoDb.setPedidoNulo();
+    
+        // No es necesario llamar a repository.save(itemProductoDb) porque @Transactional se encarga de ello
     }
 }

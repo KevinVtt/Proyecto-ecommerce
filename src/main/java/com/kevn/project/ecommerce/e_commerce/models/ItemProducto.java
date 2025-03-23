@@ -1,13 +1,13 @@
 package com.kevn.project.ecommerce.e_commerce.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.proxy.HibernateProxy;
+import lombok.ToString;
 
+import org.hibernate.proxy.HibernateProxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,13 +18,14 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ItemProducto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "itemProducto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "itemProducto",cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ProductoCantidad> productos = new ArrayList<>();
 
     @ManyToOne
@@ -32,18 +33,15 @@ public class ItemProducto {
     private Pedido pedido;
 
     @OneToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    @JsonIgnore
+    @JoinColumn(name = "usuario_id", nullable = true)
     private Usuario usuario;
-
-    public void agregarProducto(Producto producto, int cantidad) {
-        ProductoCantidad productoCantidad = new ProductoCantidad(this, producto, cantidad);
-        productos.add(productoCantidad);
-        producto.getProductosCantidad().add(productoCantidad);
-    }
 
     public void eliminarProducto(Producto producto) {
         productos.removeIf(pc -> pc.getProducto().equals(producto));
+    }
+
+    public void setPedidoNulo(){
+        pedido = null;
     }
 
     public float getTotalProductos(){

@@ -8,13 +8,12 @@ public class AgregarNuevoProducto implements AgregarProducto{
 
     @Override
     public void agregar(ItemProducto itemProducto, Producto producto, int cantidad) {
-        
+        if(itemProducto == null) { throw new RuntimeException("El item producto es nulo! ");}
         ProductoCantidad nuevoProductoCantidad = new ProductoCantidad();
-        nuevoProductoCantidad.setItemProducto(itemProducto);
         producto.setCantidad(producto.getCantidad() - cantidad);
         nuevoProductoCantidad.setProducto(producto);
         nuevoProductoCantidad.setCantidad(cantidad);
-
+        nuevoProductoCantidad.setItemProducto(itemProducto);
         itemProducto.getProductos().add(nuevoProductoCantidad);
     }
     

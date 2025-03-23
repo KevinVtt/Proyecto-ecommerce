@@ -3,7 +3,6 @@ package com.kevn.project.ecommerce.e_commerce.models;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
-
 import java.util.Objects;
 
 @Entity
@@ -19,9 +18,6 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @OneToOne(mappedBy = "usuario",cascade = CascadeType.ALL,orphanRemoval = true)
-    private ItemProducto itemProducto;
     
     private String nombre;
     private String email;

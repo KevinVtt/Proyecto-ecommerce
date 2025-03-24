@@ -1,23 +1,22 @@
 package com.kevn.project.ecommerce.e_commerce.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-import org.hibernate.proxy.HibernateProxy;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
+/*
+ * No utilizar el producto cantidad para eliminar.
+ * Ya que si lo utilizamos eliminariamos item_producto y el pedido.
+ */
 @Entity
 @Table(name = "item_producto")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @ToString
 public class ItemProducto {
 
@@ -25,43 +24,23 @@ public class ItemProducto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "itemProducto",cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<ProductoCantidad> productos = new ArrayList<>();
-
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "carrito_id", nullable = false)
+    @JsonIgnore
+    private Carrito carrito;
     @ManyToOne
-    @JoinColumn(name = "pedido_id")
-    private Pedido pedido;
+    @JoinColumn(name = "producto_id", nullable = true)
+    private Producto producto;
 
-    @OneToOne
-    @JoinColumn(name = "usuario_id", nullable = true)
-    private Usuario usuario;
+    private Integer cantidad = 0;
 
-    public void eliminarProducto(Producto producto) {
-        productos.removeIf(pc -> pc.getProducto().equals(producto));
+    public ItemProducto(Carrito carrito, Producto producto, int cantidad) {
+        this.carrito = carrito;
+        this.producto = producto;
+        this.cantidad = cantidad;
     }
 
-    public void setPedidoNulo(){
-        pedido = null;
-    }
-
-    public float getTotalProductos(){
-        float total = (float)productos.stream().mapToDouble(p -> p.getTotal()).sum();
-        return total;
-    }
-
-    @Override
-    public final boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null) return false;
-        Class<?> oEffectiveClass = object instanceof HibernateProxy ? ((HibernateProxy) object).getHibernateLazyInitializer().getPersistentClass() : object.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
-        ItemProducto that = (ItemProducto) object;
-        return getId() != null && Objects.equals(getId(), that.getId());
-    }
-
-    @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    public Float getTotal(){
+        return (float) (this.cantidad * producto.getPrecio());
     }
 }

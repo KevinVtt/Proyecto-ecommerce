@@ -1,20 +1,20 @@
 package com.kevn.project.ecommerce.e_commerce.strategy;
 
-import com.kevn.project.ecommerce.e_commerce.models.ItemProducto;
+import com.kevn.project.ecommerce.e_commerce.models.Carrito;
 import com.kevn.project.ecommerce.e_commerce.models.Producto;
-import com.kevn.project.ecommerce.e_commerce.models.ProductoCantidad;
+import com.kevn.project.ecommerce.e_commerce.models.ItemProducto;
 
 public class AgregarNuevoProducto implements AgregarProducto{
 
     @Override
-    public void agregar(ItemProducto itemProducto, Producto producto, int cantidad) {
-        if(itemProducto == null) { throw new RuntimeException("El item producto es nulo! ");}
-        ProductoCantidad nuevoProductoCantidad = new ProductoCantidad();
+    public void agregar(Carrito carrito, Producto producto, int cantidad) {
+        if(carrito == null) { throw new RuntimeException("El item producto es nulo! ");}
+        ItemProducto itemProducto = new ItemProducto();
         producto.setCantidad(producto.getCantidad() - cantidad);
-        nuevoProductoCantidad.setProducto(producto);
-        nuevoProductoCantidad.setCantidad(cantidad);
-        nuevoProductoCantidad.setItemProducto(itemProducto);
-        itemProducto.getProductos().add(nuevoProductoCantidad);
+        itemProducto.setProducto(producto);
+        itemProducto.setCantidad(cantidad);
+        itemProducto.setCarrito(carrito);
+        carrito.getProductos().add(itemProducto);
     }
     
 }

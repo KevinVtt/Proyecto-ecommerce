@@ -3,8 +3,8 @@ INSERT INTO usuario (nombre, email, password, dni, rol) VALUES ('Maria Gomez', '
 INSERT INTO producto (nombre, precio, descripcion, tipo, cantidad) VALUES ('Laptop HP', 1200.50, 'Laptop de 15 pulgadas con 8GB RAM', 'Electrónica', 10);
 INSERT INTO producto (nombre, precio, descripcion, tipo, cantidad) VALUES ('Smartphone Samsung', 800.00, 'Smartphone con 128GB de almacenamiento', 'Electrónica', 20);
 INSERT INTO producto (nombre, precio, descripcion, tipo, cantidad) VALUES ('Camiseta Nike', 25.00, 'Camiseta deportiva de algodón', 'Ropa', 50);
-INSERT INTO item_producto (usuario_id) VALUES (2);
-INSERT INTO item_producto (usuario_id) VALUES (1);
-INSERT INTO producto_cantidad (item_producto_id, producto_id, cantidad) VALUES (1, 1, 2);
-INSERT INTO producto_cantidad (item_producto_id, producto_id, cantidad) VALUES (1, 2, 1);
-INSERT INTO producto_cantidad (item_producto_id, producto_id, cantidad) VALUES (2, 3, 3);   
+INSERT INTO carrito (usuario_id) VALUES (2);
+INSERT INTO carrito (usuario_id) VALUES (1);
+INSERT INTO item_producto (carrito_id, producto_id, cantidad) VALUES (1, 1, 2);
+INSERT INTO item_producto (carrito_id, producto_id, cantidad) VALUES (1, 2, 1);
+INSERT INTO item_producto (carrito_id, producto_id, cantidad) VALUES (2, 3, 3);   

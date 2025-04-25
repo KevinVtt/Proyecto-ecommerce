@@ -7,18 +7,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.kevn.project.ecommerce.e_commerce.models.ItemProducto;
+import com.kevn.project.ecommerce.e_commerce.models.Carrito;
 import com.kevn.project.ecommerce.e_commerce.models.Usuario;
-import com.kevn.project.ecommerce.e_commerce.services.ItemProductoService;
+import com.kevn.project.ecommerce.e_commerce.services.CarritoService;
 
 @Aspect
 @Component
-public class ItemProductoAspect {
+public class CarritoAspect {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private ItemProductoService serviceProducto;
+    private CarritoService service;
 
     @AfterReturning(
         pointcut = "execution(* com.kevn.project.ecommerce.e_commerce.services.UsuarioService.save(..))",
@@ -27,10 +27,10 @@ public class ItemProductoAspect {
     public void loggerAfterReturning(JoinPoint join,Usuario usuario){
         logger.info("Usuario creado: " + usuario);
         if(usuario != null){
-            ItemProducto it = new ItemProducto();
-            it.setUsuario(usuario);
-            ItemProducto savItemProducto = serviceProducto.save(it);
-            logger.info("ItemProducto creado y asignado al Usuario: {}", savItemProducto.getId());
+            Carrito carrito = new Carrito();
+            carrito.setUsuario(usuario);
+            Carrito saveCarrito = service.save(carrito);
+            logger.info("Carrito creado y asignado al Usuario: {}", saveCarrito.getId());
         }
     }
 

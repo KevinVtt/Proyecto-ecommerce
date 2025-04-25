@@ -1,7 +1,7 @@
 package com.kevn.project.ecommerce.e_commerce.controllers;
 
-import java.util.Collections;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +16,8 @@ public class ItemProductoController {
     @Autowired
     private ItemProductoService service;
 
-    @GetMapping("/findall")
+    @GetMapping("/all")
     public ResponseEntity<?> findAll() {
-        if (service.findAll().isEmpty()) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonMap("Error", "La lista está vacía"));
-        }
         return ResponseEntity.ok(service.findAll());
     }
 
@@ -31,47 +27,23 @@ public class ItemProductoController {
     }
 
     @PostMapping("/insert")
-    public ResponseEntity<?> insert(@RequestBody ItemProducto itemProducto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(itemProducto));
+    public ResponseEntity<?> insert(@RequestBody ItemProducto productoCantidad) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(productoCantidad));
     }
 
     @PostMapping("/insertAll")
-    public ResponseEntity<?> insertMultiple(@RequestBody List<ItemProducto> itemProductos) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.saveAll(itemProductos));
+    public ResponseEntity<?> insertMultiple(@RequestBody List<ItemProducto> productosCantidad) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.saveAll(productosCantidad));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody ItemProducto itemProducto) {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.save(itemProducto));
+    public ResponseEntity<?> update(@RequestBody ItemProducto productoCantidad) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.save(productoCantidad));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);
-        return ResponseEntity.ok("ItemProducto eliminado!");
-    }
-
-    /* Lógica de negocio para los productos de ItemProducto */
-    @PostMapping("/agregar-producto/{itemProductoId}/{productoId}/{cantidad}")
-    public ResponseEntity<?> agregarProducto(
-            @PathVariable Long itemProductoId,
-            @PathVariable Long productoId,
-            @PathVariable int cantidad) {
-        service.agregarProducto(itemProductoId, productoId, cantidad);
-        return ResponseEntity.ok("Producto agregado al ItemProducto");
-    }
-
-    @DeleteMapping("/eliminar-producto/{itemProductoId}/{productoId}")
-    public ResponseEntity<?> eliminarProducto(
-            @PathVariable Long itemProductoId,
-            @PathVariable Long productoId) {
-        service.eliminarProducto(itemProductoId, productoId);
-        return ResponseEntity.ok("Producto eliminado del ItemProducto");
-    }
-
-    @DeleteMapping("/eliminar-todos-los-productos/{itemProductoId}")
-    public ResponseEntity<?> eliminarTodosLosProductos(@PathVariable Long itemProductoId) {
-        service.eliminarTodosLosProductos(itemProductoId);
-        return ResponseEntity.ok("Todos los productos han sido eliminados del ItemProducto");
+        return ResponseEntity.badRequest().body("El producto no se ha eliminado");
     }
 }
